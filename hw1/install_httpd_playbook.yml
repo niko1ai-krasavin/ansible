@@ -1,0 +1,23 @@
+---
+- name: Set up httpd webserver
+  hosts: node1.example.com
+  tasks:
+  - name: Install httpd
+    yum:
+      name: httpd
+      state: present
+  - name: Ensure httpd is running
+    service:
+      name: httpd
+      state: started
+  - name: Open port 80 for http access
+    firewalld:
+      port: "80/tcp"
+      permanent: yes
+      state: enabled
+      immediate: yes
+  - name: Add index.html file
+    template:
+      src: ./index.html
+      dest: /var/www/html/index.html
+...

@@ -1,0 +1,23 @@
+---
+- name: Delete httpd webserver
+  hosts: node1.example.com
+  tasks:
+  - name: Stop httpd
+    service:
+     name: httpd
+     state: stopped
+  - name: Delete index.html file
+    file:
+      path: /var/www/html/index.html
+      state: absent
+  - name: Close port 80 for http access
+    firewalld:
+      port: "80/tcp"
+      state: disabled
+      permanent: yes
+      immediate: yes
+  - name: Uninstall httpd
+    yum:
+      name: httpd
+      state: absent
+...
