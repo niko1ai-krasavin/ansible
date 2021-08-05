@@ -1,0 +1,19 @@
+---
+- name: Create users
+  hosts: node1.example.com
+  vars_files:
+    - users.yml
+  tasks:
+  - name: Create users form file
+    user:
+      name: "{{ item.name }}"
+      comment: "{{ item.email }}"
+      createhome: yes
+      home: "{{ item.homedir }}"
+      password: "{{ item.password | password_hash('sha512') }}"
+      shell: "/bin/bash"
+      state: present
+    loop: "{{ users }}"
+    loop_control:
+      label:  "Create user: {{ item.name }}"
+...
