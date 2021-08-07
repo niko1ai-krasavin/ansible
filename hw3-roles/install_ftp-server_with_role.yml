@@ -1,0 +1,7 @@
+---
+- name: Install FTP-server
+  hosts: nodes
+  
+  roles:
+    - install_ftp-server
+...

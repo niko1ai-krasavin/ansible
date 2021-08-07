@@ -1,0 +1,58 @@
+---
+- name: Install FTP-server
+  hosts: nodes
+
+  vars:
+    vsftpd_conf_template: ./vsftpd.j2
+    vsftpd_conf_location: /etc/vsftpd/vsftpd.conf
+    ftp_anon_dir: /var/ftp/pub
+    ftp_anon_upload_dir: /var/ftp/pub/upload
+  
+  tasks:
+  - name: FTP-server is present or install it
+    yum:
+      name: vsftpd
+      state: present
+  - name: FTP-server is running or run it
+    service:
+      name: vsftpd
+      state: started
+  - name: Firewalld is installed or install it
+    yum:
+      name: firewalld
+      state: present
+  - name: TCP port 21 is opend for http or open it
+    firewalld:
+      port: "21/tcp"
+      permanent: yes
+      state: enabled
+      immediate: yes
+  - name: Create home directory for anonymous users if it does not exist
+    file:
+      path: "{{ ftp_anon_dir }}"
+      state: directory
+      mode: 0755
+  - name: Create upload directory for anonymous users if it does not exist
+    file:
+      path: "{{ ftp_anon_upload_dir }}"
+      state: directory
+      mode: 0766
+  - name: Set permission for anonymous
+    seboolean:
+      name: ftpd_anon_write
+      state: yes
+      persistent: yes
+  - name: Template of vsftpd.conf is copied on FTP-server or copy it
+    template:
+      src: "{{ vsftpd_conf_template }}"
+      dest: "{{ vsftpd_conf_location }}"
+    register: copy_result
+    notify: Restart FTP-server
+
+  handlers:
+    - name: Restart FTP-server
+      service:
+        name: vsftpd
+        state: restarted
+      when: copy_result.changed
+...

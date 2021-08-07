@@ -1,0 +1,7 @@
+---
+# vars file for install_ftp-server
+vsftpd_conf_template: vsftpd.j2
+vsftpd_conf_location: /etc/vsftpd/vsftpd.conf
+ftp_anon_dir: /var/ftp/pub
+ftp_anon_upload_dir: /var/ftp/pub/upload
+...

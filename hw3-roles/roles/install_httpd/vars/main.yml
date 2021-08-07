@@ -1,0 +1,5 @@
+---
+# vars file for install_httpd
+src_file: index.j2
+dest_file: /var/www/html/index.html
+...

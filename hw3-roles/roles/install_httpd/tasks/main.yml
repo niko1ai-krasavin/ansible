@@ -1,0 +1,27 @@
+---
+# tasks file for install_httpd
+- name: Apache web-server is present or install it
+  yum:
+    name: httpd
+    state: present
+- name: Apache web-server is running or run it
+  service:
+    name: httpd
+    state: started
+- name: Firewalld is installed or install it
+  yum:
+    name: firewalld
+    state: present
+- name: TCP port 80 is opend for http or open it
+  firewalld:
+    port: "80/tcp"
+    permanent: yes
+    state: enabled
+    immediate: yes
+- name: Template file is copied on web-server or copy it
+  template:
+    src: "{{ src_file }}"
+    dest: "{{ dest_file }}"
+  register: copy_result
+  notify: Restart Apache web-server
+...
